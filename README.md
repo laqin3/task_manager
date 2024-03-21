@@ -1,5 +1,5 @@
 # task_manager
-Task manager is a flaskapp utility project. Its primary purpose is to allow users to monitor and manage the processes and applications running on their computer.
+Task manager is a Flask based personal site and its function is to help the users to monitor and manage their tasks completion process as a group member or a personal.
 
 ## How to use it?
 - Download and install: git@github.com:laqin3/task_manager.git
