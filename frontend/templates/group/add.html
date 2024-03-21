@@ -1,0 +1,17 @@
+{% extends "_base.html" %}
+
+{% block title %}Create Group{% endblock %}
+
+{% block content %}
+
+<form  method="post">
+    {{ group_form.csrf_token }}
+    <div class="form-group">
+        {{ group_form.name.label }}
+        {{ group_form.name(class="form-control", placeholder="name") }}
+    </div>
+    <button type="submit" class="btn btn-primary mt-2">Create Group</button>
+    <a class="btn btn-warning mt-2" href="{{ url_for('task.personal_tasks') }}">Cancel</a>
+</form>
+
+{% endblock %}

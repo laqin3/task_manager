@@ -1,0 +1,51 @@
+{% extends "_base.html" %}
+
+{%block title%}Profile{%endblock%}
+
+{% block error %}
+{{ error }}
+{% endblock %}
+
+{%block content%}
+
+{% if not context.is_editible %}
+<a class="btn btn-primary" href="{{ url_for('profile.edit_profile') }}">Edit</a>
+{% endif %}
+
+<form method="POST">
+    {{ context.user_form.csrf_token }}
+
+    {% for field in context.user_form %}
+    {% if field.name != "csrf_token" %}
+        <div class="col-12 m-3">
+            {{ field.label(class="visually-hidden") }}
+
+            <div class="input-group">
+
+                <div class="input-group-text col-3">{{ field.label.text }}</div>
+
+                {% if context.is_editible and context.user_form.errors[field.id] %}
+                {{ field(class="form-control is-invalid") }}
+                {% elif context.is_editible %}
+                {{ field(class="form-control") }}
+                {% else %}
+                {{ field(class="form-control", readonly="", disabled="") }}
+                {% endif %}
+
+                <div class="invalid-feedback">
+                    {% for err in context.user_form.errors[field.id] %}
+                    <p>{{ err }}</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    {% endif %}
+    {% endfor %}
+    {% if context.is_editible %}
+    <div class="button-group">
+        <button type="submit" class="btn btn-primary">Submit</button>
+        <a type="button" class="btn btn-warning" href="{{ url_for('profile.view_profile') }}">Cancel</a>
+    </div>
+    {% endif %}
+</form>
+{% endblock %}

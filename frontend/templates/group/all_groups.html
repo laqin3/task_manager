@@ -1,0 +1,54 @@
+{% extends "_base.html" %}
+
+{% block title %}Groups{% endblock %}
+
+
+
+{% block error %}
+{{ error }}
+{% endblock %}
+
+
+{%block content%}
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-auto">
+            <h1>All Groups</h1> 
+        </div>
+        <div class="col-auto">
+            <a class="btn btn-success" href="{{ url_for('group.create_group') }}">Create a Group</a>
+        </div>
+    </div>
+</div>
+
+{% if context.all_groups|length > 0  %}
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Group Name</th>
+            <th scope="col">User Id</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for group in context.all_groups %}
+        <tr onclick="window.location='{{ url_for('group.group_detail', group_id=group.id) }}'">
+            <th scope="row">{{ group.id }}</th>
+            <td class="text-center">{{ group.name.title() }}</td>
+            <td>{{ group.organizer_id }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+    <h2 class="mt-5">
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            No Group Found
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    </h2>
+
+{% endif %}
+
+{% endblock %}

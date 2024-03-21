@@ -1,0 +1,139 @@
+{% extends "_base.html" %}
+
+{% block title %}Group Detail{% endblock %}
+
+
+{%block error%}
+{{error}}
+{%endblock%}
+
+{% block content %}
+
+<div class="card text-center">
+    <div class="card-header">
+        <div class="row">
+            <div class="col-3 text-start">
+                <a href="{{ url_for('group.view_groups' )}}" class="btn btn-warning">Back</a>
+            </div>
+            <div class="col-6 text-center">
+                Group Details for {{ context.group.name }}
+            </div>
+        </div>
+    </div>
+    <div class="card-body">
+        <h5 class="card-title mt-2">Group Name: {{context.group.name.title()}}</h5>
+        <p class="card-text mt-3">Group Id: {{ context.group.id }}</p>
+        <p class="card-text">Group Organizer Id: {{ context.group.organizer_id }}</p>
+
+        {% if context.group.organizer_id == current_user.id %}
+        <a href="{{ url_for('group.edit_group', group_id=context.group.id)}}" class="btn btn-primary">Edit Group
+            Name</a>
+
+
+        <!-- Button trigger modal -->
+        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteAGroup">
+            Delete Group
+        </button>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="deleteAGroup" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Confirm you want to delete the group -- {{context.group.name}}?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <a href="{{ url_for('group.delete_group', group_id=context.group.id) }}" class="btn btn-danger">
+                    Confirm delete
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="container mt-3">
+    <div class="row">
+        <div class="col-6">
+            <h4>Tasks</h4>
+            <table class="table text-start">
+                <thead>
+                    <tr>
+                        <th scope="col">Task title</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Assigned to</th>
+                    </tr>
+                </thead>
+
+                
+                {% for task in context.tasks %}
+                <tbody>
+                    {% if not task.is_deleted %}
+                    <tr onclick="window.location='{{ url_for('task.task_detail', task_id=task.id ) }}' ">
+                        <td>{{ task.title }}</td>
+                        <td>
+                            {% if task.is_completed == False %}
+                            Not_Completed
+                            {% else %}
+                            <p class="text-success">Completed</p>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {{ task.assigned_to }}
+                           {# {{ task.get_user_name(task.assigned_to).first_name }} {{ task.get_user_name(task.assigned_to).last_name[0] }} #}
+                        </td>
+                    </tr>
+                    {% endif %}
+                </tbody>
+                {% endfor %}     
+            </table>
+        </div>
+
+
+        <div class="col-1">
+        </div>
+
+        <div class="col-5">
+
+            <h4>Members</h4>
+            <div class="row justify-content-center">
+
+                <form class="d-flex" role="search" method="post" action="{{ url_for('usergroup.add_member', group_id=context.group.id) }}">
+                    <input class="form-control me-2" type="text" placeholder="email" aria-label="Search" name="email">
+                    <button class="btn btn-outline-success" type="submit" href="" >Add</button>
+                </form>
+                <form class="d-flex" role="search" method="post" action="{{ url_for('usergroup.remove_member', group_id=context.group.id) }}">
+                    <input class="form-control me-2" type="text" placeholder="email" aria-label="Search" name="email">
+                    <button class="btn btn-outline-danger" type="submit" href="" >remove</button>
+                </form>
+            </div>
+            <table class="table text-start">
+                <thead>
+                    <tr>
+                        <th scope="col">Member Id</th>
+                        <th scope="col">Member name</th>
+                    </tr>
+                </thead>
+                {% for member in context.members %}
+                <tbody>
+                    <tr>
+                        <td>{{ member.id }}</td>
+                        <td>{{ member.first_name}} {{ member.last_name }}</td>
+                    </tr>
+                </tbody>
+                {% endfor %}
+            </table>
+           
+        </div>
+        
+    </div>
+</div>
+{% endblock %}

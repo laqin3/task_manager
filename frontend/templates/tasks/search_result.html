@@ -1,0 +1,90 @@
+{% extends "_base.html" %}
+
+{% block title %}Personal Tasks{% endblock %}
+
+{% block content %}
+
+
+{% if context.tasks  %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-auto">
+            <h1>Your personal tasks</h1> 
+        </div>
+        <div class="col-auto">
+            <a class="btn btn-success" href="{{ url_for('task.create_task') }}">Create a Task</a>
+        </div>
+    </div>
+    <div class="row justify-content-center">
+        <form class="d-flex" role="search" method="post" action="{{ url_for('task.search') }}">        
+            <input class="form-control me-2" type="text" placeholder="title or description" aria-label="Search" name="title">
+            <button class="btn btn-outline-success" type="submit">Submit</button>
+        </form>
+    </div>
+</div>
+
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Title</th>
+            <th scope="col">Created Date</th>       
+            <th scope="col">Due_date</th>
+            <th scope="col">User Id</th>
+            <th scope="col">Status</th>
+            <th scope="col">Assigned to</th>
+
+        </tr>
+    </thead>
+    <tbody>
+   
+        {% for task in context.tasks %}
+
+        {% if not task.is_deleted %}
+        <tr onclick="window.location='{{ url_for('task.task_detail', task_id=task.id) }}'">
+            <th scope="row">{{ task.id }}</th>
+            <td>{{ task.title.title() }}</td>
+            <td>{{ task.create_date.strftime('%Y-%m-%d') }}</td>            
+            <td>{{ task.due_date.strftime('%Y-%m-%d') }}</td>
+            <td>{{ task.user_id }}</td>
+            <td>
+                {% if task.is_completed %}
+                <h5 class="text-success">Completed</h5>
+                {% elif task.is_deleted %}
+                <h5>Deleted</h5>
+                {% else %}
+                 Not Completed
+                {% endif %}
+            </td>
+            <td>{{ task.assigned_to }}</td>
+        </tr>
+        {% endif %}
+
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<div class="container">
+   
+    <div class="row justify-content-center">
+        <form class="d-flex" role="search" method="post" action="{{ url_for('task.search') }}">        
+            <input class="form-control me-2" type="text" placeholder="title or description" aria-label="Search" name="title">
+            <button class="btn btn-outline-success" type="submit">Submit</button>
+        </form>
+    </div>
+</div>
+<div class="mt-5">
+    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+        No Task Found
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% if context.all_task_count != 0 %}
+    <div class="col-auto">
+        <a class="btn btn-warning" href="{{ url_for('task.personal_tasks') }}">Back to My Tasks</a>
+    </div>
+    {% endif %}
+</div>
+
+{% endif %}
+{% endblock %}

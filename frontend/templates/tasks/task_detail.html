@@ -1,0 +1,72 @@
+{% extends "_base.html" %}
+
+{% block title %}Task Detail{% endblock %}
+
+{% block error %}
+{{ error }}, Go to <a href="#">Create Task</a>
+{% endblock %}
+
+{% block content %}
+
+<div class="card text-center">
+    <div class="card-header">
+      <div class="row">
+        <div class="col-3 text-start">
+          <a href="{{ url_for('task.personal_tasks' )}}" class="btn btn-warning">Back</a>
+        </div>
+        <div class="col-6 text-center">
+          Task for user{{ context.task.user_id }}
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h5 class="card-title mt-2">Task title: {{context.task.title.title()}}</h5>
+      <p class="card-text mt-3">Task due_date: {{ context.task.due_date.strftime('%Y-%m-%d') }}</p>
+      <p class="card-text">Task description: {{ context.task.description }}</p>
+      <p class="card-text">Assigned to: {{ context.task.assigned_to }}</p>
+      {#<p class="card-text">Assigned to: {{ context.task.get_user_name(context.task.user_id).first_name }} {{ context.task.get_user_name(context.task.user_id).last_name }}</p>#}
+
+      <a href="{{ url_for('task.is_complete', task_id=context.task.id) }}" class="btn btn-success">
+        {% if context.task.is_completed == False %}
+            Mark as Complete
+        {% else %}
+            Mark as Not_Completed 
+        {% endif %}
+      </a>
+
+      <a href="{{ url_for('task.edit_task', task_id=context.task.id)}}" class="btn btn-primary">Edit</a>
+
+        {% if context.task.is_deleted == False %}  
+          <!-- Button trigger modal1 -->
+          <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#deleteTask">       
+                  Mark as Deleted
+          </button>
+        {% else %}
+            <a href="{{ url_for('task.is_delete', task_id=context.task.id) }}" class="btn btn-danger">Mark as Not_Deleted</a>
+        {% endif %}
+     
+    </div>
+    <div class="card-footer text-body-secondary">
+      Created at {{ context.task.create_date.strftime('%Y-%m-%d')}}
+    </div>
+  </div>
+
+  <!-- Modal1 -->
+<div class="modal fade" id="deleteTask" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        Are you sure to delete the task- {{context.task.title.title()}}
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <a href="{{ url_for('task.is_delete', task_id=context.task.id) }}" class="btn btn-danger">Confirm Delete</a>      
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
